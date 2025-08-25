@@ -1,6 +1,17 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import {
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Plus,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FilterIcon } from "../icons";
+import { Input } from "./input";
 
 const Table = React.forwardRef<
   HTMLTableElement,
@@ -178,6 +189,8 @@ interface SortableTableProps<T = Record<string, unknown>> {
   columns: ColumnDef<T>[];
   className?: string;
   onDataChange?: (sortedData: T[]) => void;
+  rowsPerPage?: number;
+  showPagination?: boolean;
 }
 
 function SortableTable<T extends Record<string, unknown>>({
@@ -185,11 +198,14 @@ function SortableTable<T extends Record<string, unknown>>({
   columns,
   className,
   onDataChange,
+  rowsPerPage = 10,
+  showPagination = true,
 }: SortableTableProps<T>) {
   const [sortConfig, setSortConfig] = React.useState<SortConfig>({
     field: "",
     direction: null,
   });
+  const [currentPage, setCurrentPage] = React.useState(1);
 
   const sortedData = React.useMemo(() => {
     if (!sortConfig.field || !sortConfig.direction) {
@@ -234,6 +250,28 @@ function SortableTable<T extends Record<string, unknown>>({
     }
   }, [sortedData, onDataChange]);
 
+  // Pagination calculations
+  const totalPages = Math.ceil(sortedData.length / rowsPerPage);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const currentPageData = sortedData.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1);
+    }
+  };
+
   const handleSort = (field: string) => {
     setSortConfig((prev) => {
       if (prev.field === field) {
@@ -246,41 +284,107 @@ function SortableTable<T extends Record<string, unknown>>({
       }
       return { field, direction: "asc" };
     });
+
+    // Reset to first page when sorting changes
+    setCurrentPage(1);
   };
 
   return (
-    <Table className={className}>
-      <TableHeader>
-        <TableRow>
-          {columns.map((column) => (
-            <SortableTableHead
-              key={column.key}
-              sortable={column.sortable}
-              sortDirection={
-                sortConfig.field === column.key ? sortConfig.direction : null
-              }
-              onSort={() => column.sortable && handleSort(column.key)}
-              className={column.className}
-            >
-              {column.header}
-            </SortableTableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {sortedData.map((item, index) => (
-          <TableRow key={String(item.id) || index} isEven={index % 2 === 0}>
+    <div>
+      <div className="flex items-center justify-between p-6 border-b border-[#e6eff5] bg-[#F4F7FC]">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-[#718ebf] bg-white dark:bg-white border-2 border-gray-300 shadow-md"
+          >
+            <FilterIcon />
+          </Button>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#718ebf] w-4 h-4" />
+            <Input
+              placeholder="Search..."
+              className="pl-10 w-80 border-none text-[#718ebf] bg-white dark:bg-white border-2 border-gray-300 dark:border-2 dark:border-gray-300 shadow-md"
+            />
+          </div>
+        </div>
+        <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+          <Plus className="w-4 h-4 mr-1" />
+          Add customer
+        </Button>
+      </div>
+
+      <Table className={className}>
+        <TableHeader>
+          <TableRow>
             {columns.map((column) => (
-              <TableCell key={column.key} className={column.className}>
-                {column.render
-                  ? column.render(item, index)
-                  : String(item[column.key] || "")}
-              </TableCell>
+              <SortableTableHead
+                key={column.key}
+                sortable={column.sortable}
+                sortDirection={
+                  sortConfig.field === column.key ? sortConfig.direction : null
+                }
+                onSort={() => column.sortable && handleSort(column.key)}
+                className={column.className}
+              >
+                {column.header}
+              </SortableTableHead>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {(showPagination ? currentPageData : sortedData).map(
+            (item, index) => (
+              <TableRow key={String(item.id) || index} isEven={index % 2 === 0}>
+                {columns.map((column) => (
+                  <TableCell key={column.key} className={column.className}>
+                    {column.render
+                      ? column.render(item, index)
+                      : String(item[column.key] || "")}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )
+          )}
+        </TableBody>
+      </Table>
+
+      {/* Pagination */}
+      {showPagination && sortedData.length > rowsPerPage && (
+        <div className="flex items-center justify-between p-6 border-t border-[#e6eff5]">
+          <div className="text-[#718ebf] text-sm">
+            {startIndex + 1}-{Math.min(endIndex, sortedData.length)} of{" "}
+            {sortedData.length}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[#718ebf] text-sm mr-4">
+              Rows per page: {rowsPerPage}
+            </span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-[#718ebf] border-2 border-gray-300 shadow-md size-6"
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            <span className="text-[#343C6A] text-sm px-2">
+              {currentPage}/{totalPages}
+            </span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-[#718ebf] border-2 border-gray-300 shadow-md size-6"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

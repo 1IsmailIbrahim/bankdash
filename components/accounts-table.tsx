@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,107 +10,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SortableTable } from "@/components/ui/table";
 import { FilterIcon } from "./icons";
 
-const accountsData = [
-  {
-    id: 1,
-    name: "Ann Culhane",
-    accountNumber: "5684236526",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla...",
-    status: "Open",
-    rate: "$70.00 CAD",
-    balance: "-$270.00 CAD",
-    deposit: "$500.00 CAD",
-  },
-  {
-    id: 2,
-    name: "Ahmad Rosser",
-    accountNumber: "5684236527",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla...",
-    status: "Paid",
-    rate: "$70.00 CAD",
-    balance: "$270.00 CAD",
-    deposit: "$500.00 CAD",
-  },
-  {
-    id: 3,
-    name: "Zain Calzoni",
-    accountNumber: "5684236528",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla...",
-    status: "Open",
-    rate: "$70.00 CAD",
-    balance: "-$20.00 CAD",
-    deposit: "$500.00 CAD",
-  },
-  {
-    id: 4,
-    name: "Leo Stanton",
-    accountNumber: "5684236529",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla...",
-    status: "Inactive",
-    rate: "$70.00 CAD",
-    balance: "$600.00 CAD",
-    deposit: "$500.00 CAD",
-  },
-  {
-    id: 5,
-    name: "Kalya Vetrovs",
-    accountNumber: "5684236530",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla...",
-    status: "Open",
-    rate: "$70.00 CAD",
-    balance: "-$350.00 CAD",
-    deposit: "$500.00 CAD",
-  },
-  {
-    id: 6,
-    name: "Ryan Westervelt",
-    accountNumber: "5684236531",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla...",
-    status: "Paid",
-    rate: "$70.00 CAD",
-    balance: "-$270.00 CAD",
-    deposit: "$500.00 CAD",
-  },
-  {
-    id: 7,
-    name: "Corey Stanton",
-    accountNumber: "5684236532",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla...",
-    status: "Due",
-    rate: "$70.00 CAD",
-    balance: "$30.00 CAD",
-    deposit: "$500.00 CAD",
-  },
-  {
-    id: 8,
-    name: "Adison Aminoff",
-    accountNumber: "5684236533",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla...",
-    status: "Open",
-    rate: "$70.00 CAD",
-    balance: "-$270.00 CAD",
-    deposit: "$500.00 CAD",
-  },
-  {
-    id: 9,
-    name: "Alfredo Aminoff",
-    accountNumber: "5684236534",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla...",
-    status: "Inactive",
-    rate: "$70.00 CAD",
-    balance: "$460.00 CAD",
-    deposit: "$500.00 CAD",
-  },
-];
+interface AccountData extends Record<string, unknown> {
+  id: number;
+  name: string;
+  accountNumber: string;
+  description: string;
+  status: string;
+  rate: string;
+  balance: string;
+  deposit: string;
+}
 
 const getStatusBadgeVariant = (status: string) => {
   switch (status) {
@@ -128,9 +37,42 @@ const getStatusBadgeVariant = (status: string) => {
 };
 
 export function AccountsTable() {
+  const [accountsData, setAccountsData] = useState<AccountData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [sortedData, setSortedData] = useState(accountsData);
+  const [sortedData, setSortedData] = useState<AccountData[]>([]);
   const headerCheckboxId = "header-checkbox";
+
+  useEffect(() => {
+    const fetchAccountsData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          "https://dummyjson.com/c/2a87-7764-4427-99a0",
+          {
+            cache: "force-cache",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch accounts data");
+        }
+
+        const data: AccountData[] = await response.json();
+        setAccountsData(data);
+        setSortedData(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching accounts data:", err);
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccountsData();
+  }, []);
 
   useEffect(() => {
     // set the native input indeterminate state when some but not all are selected
@@ -138,13 +80,22 @@ export function AccountsTable() {
     const input =
       (wrapper?.querySelector("input") as HTMLInputElement | null) || null;
     if (!input) return;
+
+    const selectedOnCurrentPage = sortedData.filter((item) =>
+      selectedIds.includes(item.id)
+    );
     input.indeterminate =
-      selectedIds.length > 0 && selectedIds.length < sortedData.length;
-  }, [selectedIds, sortedData.length]);
+      selectedOnCurrentPage.length > 0 &&
+      selectedOnCurrentPage.length < sortedData.length;
+  }, [selectedIds, sortedData]);
 
   const handleSelectAll = (checked: boolean) => {
-    if (checked) setSelectedIds(sortedData.map((a) => a.id));
-    else setSelectedIds([]);
+    if (checked) {
+      const allIds = sortedData.map((a: AccountData) => a.id);
+      setSelectedIds(allIds);
+    } else {
+      setSelectedIds([]);
+    }
   };
 
   const toggleRow = (id: number, checked: boolean) => {
@@ -159,12 +110,15 @@ export function AccountsTable() {
       header: (
         <Checkbox
           id={headerCheckboxId}
-          checked={selectedIds.length === sortedData.length}
+          checked={
+            sortedData.length > 0 &&
+            sortedData.every((item) => selectedIds.includes(item.id))
+          }
           onCheckedChange={(checked: boolean) => handleSelectAll(!!checked)}
           className="shadow-md bg-white dark:bg-white"
         />
       ),
-      render: (account: (typeof accountsData)[0]) => (
+      render: (account: AccountData) => (
         <Checkbox
           checked={selectedIds.includes(account.id)}
           onCheckedChange={(checked: boolean) =>
@@ -179,14 +133,14 @@ export function AccountsTable() {
       key: "id",
       header: "#",
       sortable: true,
-      render: (account: (typeof accountsData)[0]) => account.id,
+      render: (account: AccountData) => account.id,
       className: "text-[#343C6A] font-medium",
     },
     {
       key: "name",
       header: "ACCOUNT NAME",
       sortable: true,
-      render: (account: (typeof accountsData)[0]) => (
+      render: (account: AccountData) => (
         <div>
           <p className="text-[#343C6A] font-medium">{account.name}</p>
           <p className="text-[#718ebf] text-sm">{account.accountNumber}</p>
@@ -196,7 +150,7 @@ export function AccountsTable() {
     {
       key: "description",
       header: "DESCRIPTION",
-      render: (account: (typeof accountsData)[0]) => (
+      render: (account: AccountData) => (
         <p className="truncate">{account.description}</p>
       ),
       className: "text-gray-700 text-sm max-w-xs",
@@ -204,7 +158,7 @@ export function AccountsTable() {
     {
       key: "status",
       header: "STATUS",
-      render: (account: (typeof accountsData)[0]) => (
+      render: (account: AccountData) => (
         <Badge
           className={`${getStatusBadgeVariant(account.status)} border-none`}
         >
@@ -226,7 +180,7 @@ export function AccountsTable() {
     {
       key: "balance",
       header: "BALANCE",
-      render: (account: (typeof accountsData)[0]) => (
+      render: (account: AccountData) => (
         <div className="text-right">
           <p
             className={`font-medium ${
@@ -259,63 +213,32 @@ export function AccountsTable() {
     <div className="p-8">
       <Card className="bg-white border border-[#dbe2e7] py-0">
         <CardContent className="p-0">
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-[#e6eff5] bg-[#F4F7FC]">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-[#718ebf] bg-white dark:bg-white border-2 border-gray-300 shadow-md"
-              >
-                <FilterIcon />
-              </Button>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#718ebf] w-4 h-4" />
-                <Input
-                  placeholder="Search..."
-                  className="pl-10 w-80 border-none text-[#718ebf] bg-white dark:bg-white border-2 border-gray-300 dark:border-2 dark:border-gray-300 shadow-md"
-                />
-              </div>
+          {/* Loading State */}
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-[#718ebf]">Loading accounts...</div>
             </div>
-            <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-              <Plus className="w-4 h-4 mr-1" />
-              Add customer
-            </Button>
-          </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-red-500">Error: {error}</div>
+            </div>
+          )}
 
           {/* Table */}
-          <div className="overflow-x-auto">
-            <SortableTable
-              data={accountsData}
-              columns={columns}
-              onDataChange={setSortedData}
-            />
-          </div>
-
-          {/* Pagination */}
-          <div className="flex items-center justify-between p-6 border-t border-[#e6eff5]">
-            <div className="text-[#718ebf] text-sm">1-10 of 97</div>
-            <div className="flex items-center gap-2">
-              <span className="text-[#718ebf] text-sm mr-4">
-                Rows per page: 10
-              </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-[#718ebf] border-2 border-gray-300 shadow-md size-6"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <span className="text-[#343C6A] text-sm px-2">1/10</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-[#718ebf] border-2 border-gray-300 shadow-md size-6"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+          {!loading && !error && (
+            <div className="overflow-x-auto">
+              <SortableTable<AccountData>
+                data={accountsData}
+                columns={columns}
+                onDataChange={setSortedData}
+                rowsPerPage={10}
+                showPagination={true}
+              />
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>
