@@ -7,16 +7,23 @@ import { LoginPage } from "@/components/login-page";
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+    
     const authStatus = localStorage.getItem("bankdash-auth");
     if (authStatus === "true") {
       setIsAuthenticated(true);
       router.push("/dashboard");
     }
     setIsLoading(false);
-  }, [router]);
+  }, [router, isClient]);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
