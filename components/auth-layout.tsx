@@ -61,7 +61,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f7fa] flex">
+    <div className="min-h-screen bg-[#f5f6fb] flex">
       {/* Sidebar */}
       <Sidebar
         onLogout={handleLogout}
