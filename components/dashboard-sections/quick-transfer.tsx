@@ -31,7 +31,7 @@ export function QuickTransfers() {
       <h2 className="text-[#343C6A] text-lg md:text-xl font-semibold mb-4 md:mb-6">
         Quick Transfer{" "}
       </h2>
-      <Card className="bg-white rounded-2xl p-4 md:p-8 shadow-sm border border-gray-200 w-full">
+      <Card className="bg-white rounded-3xl p-4 md:p-8 shadow-sm border border-gray-200 w-full">
         <div className="flex flex-row items-center space-y-6 md:space-y-0 justify-between mb-8 md:mb-16">
           <div className="flex items-center space-x-3 md:space-x-8 overflow-x-auto pb-2 md:pb-0">
             {contactsData.map((contact) => (

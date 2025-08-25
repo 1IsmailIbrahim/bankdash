@@ -99,7 +99,7 @@ export function ExpenseStatistics() {
       <h2 className="text-[#343C6A] text-lg md:text-xl font-semibold mb-4 md:mb-6">
         Expense Statistics
       </h2>
-      <Card className="bg-white border border-[#e6eff5]">
+      <Card className="bg-white border border-[#e6eff5] rounded-3xl">
         <CardContent className="p-4 py-0">
           <div className="relative w-full h-64 md:h-80 mx-auto mb-4">
             <ResponsiveContainer width="100%" height="100%">

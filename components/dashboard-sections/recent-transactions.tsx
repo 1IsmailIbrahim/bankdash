@@ -37,8 +37,8 @@ export function RecentTransactions() {
       <h2 className="text-[#343C6A] text-lg md:text-xl font-semibold mb-4 md:mb-6">
         Recent Transaction
       </h2>
-      <Card className="bg-white border border-[#e6eff5]">
-        <CardContent className="p-4 md:p-6">
+      <Card className="bg-white border border-[#e6eff5] md:py-4 rounded-3xl">
+        <CardContent className="p-4 xl:p-6">
           <div className="space-y-3 md:space-y-4">
             {transactionsData.map((transaction) => (
               <div

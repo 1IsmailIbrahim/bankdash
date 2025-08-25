@@ -24,7 +24,7 @@ export function WeeklyActivity() {
       <h2 className="text-[#343C6A] text-lg md:text-xl font-semibold mb-4 md:mb-6">
         Weekly Activity
       </h2>
-      <Card className="bg-white border border-[#e6eff5]">
+      <Card className="bg-white border border-[#e6eff5] rounded-3xl">
         <CardContent className="p-4 md:p-6">
           <div className="flex justify-center md:justify-end mb-4">
             <div className="flex items-center gap-4 md:gap-6">

@@ -24,7 +24,7 @@ export function BalanceHistory() {
       <h2 className="text-[#343C6A] text-lg md:text-xl font-semibold mb-4 md:mb-6">
         Balance History
       </h2>
-      <Card className="bg-white border border-[#e6eff5]">
+      <Card className="bg-white border border-[#e6eff5] rounded-3xl">
         <CardContent className="p-4 md:p-6">
           <div className="h-48 md:h-64 relative">
             <ResponsiveContainer width="100%" height="100%">

@@ -57,7 +57,7 @@ export const MyCardsSection = () => {
         {cardData.map((card) => (
           <Card
             key={card.id}
-            className={`w-full sm:flex-1 relative rounded-2xl ${card.bgClass} overflow-hidden flex flex-col justify-between py-0 bt-0 pb-4`}
+            className={`w-full sm:flex-1 relative rounded-3xl ${card.bgClass} overflow-hidden flex flex-col justify-between py-0 bt-0 pb-4`}
           >
             <div className="flex justify-between items-start px-3 md:px-4 pt-3 md:pt-4">
               <div>
