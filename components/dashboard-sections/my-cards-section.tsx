@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
 const cardData = [
@@ -40,8 +40,8 @@ const cardData = [
 
 export const MyCardsSection = () => {
   return (
-    <section className="w-full h-full relative min-h-[350px]">
-      <div className="flex justify-between items-center mb-6 md:mb-[47px]">
+    <section className="w-full h-full relative">
+      <div className="flex justify-between items-center mb-6">
         <h2 className="font-semibold text-[#343C6A] text-lg md:text-[22px] tracking-[0] leading-[normal]">
           My Cards
         </h2>
@@ -53,18 +53,21 @@ export const MyCardsSection = () => {
         </Button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 md:gap-[30px] w-full justify-start items-start overflow-x-auto h-full">
+      <div className="flex flex-col sm:flex-row gap-4 md:gap-[30px] w-full justify-start items-start h-full">
         {cardData.map((card) => (
           <Card
             key={card.id}
-            className={`w-full sm:w-[350px] h-[200px] sm:h-[235px] sm:min-w-[300px] sm:max-w-[350px] relative rounded-2xl ${card.bgClass} overflow-hidden flex flex-col justify-between shrink-0 py-0 bt-0 pb-6`}
+            className={`w-full sm:flex-1 relative rounded-2xl ${card.bgClass} overflow-hidden flex flex-col justify-between py-0 bt-0 pb-4`}
           >
-            {/* Top section: Balance */}
             <div className="flex justify-between items-start px-3 md:px-4 pt-3 md:pt-4">
               <div>
-                <div className={`text-xs ${card.labelColor}`}>Balance</div>
                 <div
-                  className={`text-lg md:text-xl font-normal ${card.textColor}`}
+                  className={`text-[11px] sm:text-xs md:text-sm lg:text-xs ${card.labelColor}`}
+                >
+                  Balance
+                </div>
+                <div
+                  className={`text-sm sm:text-base md:text-lg lg:text-xl font-normal ${card.textColor}`}
                 >
                   {card.balance}
                 </div>
@@ -87,15 +90,27 @@ export const MyCardsSection = () => {
             {/* Middle section: Card holder and valid thru */}
             <div className="flex justify-between mt-2 md:mt-4 px-3 md:px-4">
               <div>
-                <div className={`text-xs ${card.labelColor}`}>CARD HOLDER</div>
-                <div className={`text-sm ${card.textColor}`}>
+                <div
+                  className={`text-[11px] sm:text-xs md:text-sm lg:text-xs ${card.labelColor}`}
+                >
+                  CARD HOLDER
+                </div>
+                <div
+                  className={`text-xs sm:text-sm md:text-base lg:text-sm ${card.textColor}`}
+                >
                   {card.cardHolder}
                 </div>
               </div>
 
               <div>
-                <div className={`text-xs ${card.labelColor}`}>VALID THRU</div>
-                <div className={`text-sm ${card.textColor}`}>
+                <div
+                  className={`text-[11px] sm:text-xs md:text-sm lg:text-xs ${card.labelColor}`}
+                >
+                  VALID THRU
+                </div>
+                <div
+                  className={`text-xs sm:text-sm md:text-base lg:text-sm ${card.textColor}`}
+                >
                   {card.validThru}
                 </div>
               </div>
@@ -115,17 +130,17 @@ export const MyCardsSection = () => {
                 }`}
               >
                 <div
-                  className={`absolute top-0.5 left-3 md:left-6 font-normal ${card.cardNumberColor} text-lg md:text-[22px] tracking-[0] leading-[normal] whitespace-nowrap`}
+                  className={`absolute top-0.5 left-3 md:left-6 font-normal ${card.cardNumberColor} text-sm md:text-lg xl:text-[22px] tracking-[0] leading-[normal] whitespace-nowrap`}
                 >
                   {card.cardNumber}
                 </div>
-                <div className="absolute w-11 h-[30px] top-0 right-3 md:right-6">
-                  <div className="relative h-[30px]">
+                <div className="absolute w-11 h-[20] xl:h-[30px] top-0 md:top-2 xl:top-0 right-3 md:right-6">
+                  <div className="relative h-[20] xl:h-[30px]">
                     <div
-                      className={`absolute w-[30px] h-[30px] top-0 left-0 ${card.circleColor} rounded-[15px]`}
+                      className={`absolute w-[20px] h-[20px] xl:w-[30px] xl:h-[30px] top-0 left-0 ${card.circleColor} rounded-[15px]`}
                     />
                     <div
-                      className={`absolute w-[30px] h-[30px] top-0 left-3.5 ${card.circleColor} rounded-[15px]`}
+                      className={`absolute w-[20px] h-[20px] xl:w-[30px] xl:h-[30px] top-0 left-3.5 ${card.circleColor} rounded-[15px]`}
                     />
                   </div>
                 </div>
