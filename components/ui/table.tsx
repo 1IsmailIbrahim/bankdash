@@ -17,10 +17,10 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  <div className="relative w-full overflow-x-auto table-scroll table-container">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
+      className={cn("w-full min-w-[900px] caption-bottom text-sm", className)}
       {...props}
     />
   </div>
@@ -87,7 +87,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "text-left p-4 text-gray-700 text-sm font-medium border-b border-[#e6eff5]",
+      "text-left p-2 sm:p-4 text-gray-700 text-xs sm:text-sm font-medium border-b border-[#e6eff5] whitespace-nowrap",
       className
     )}
     {...props}
@@ -124,7 +124,7 @@ const SortableTableHead = React.forwardRef<
       <th
         ref={ref}
         className={cn(
-          "text-left p-4 text-gray-700 text-sm font-medium border-b border-[#e6eff5] cursor-pointer hover:bg-[#f0f4f8] select-none transition-colors",
+          "text-left p-2 sm:p-4 text-gray-700 text-xs sm:text-sm font-medium border-b border-[#e6eff5] cursor-pointer hover:bg-[#f0f4f8] select-none transition-colors whitespace-nowrap",
           className
         )}
         onClick={onSort}
@@ -154,7 +154,11 @@ const TableCell = React.forwardRef<
   HTMLTableCellElement,
   React.TdHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
-  <td ref={ref} className={cn("p-4 align-middle", className)} {...props} />
+  <td
+    ref={ref}
+    className={cn("p-2 sm:p-4 align-middle text-xs sm:text-sm", className)}
+    {...props}
+  />
 ));
 TableCell.displayName = "TableCell";
 
@@ -291,7 +295,7 @@ function SortableTable<T extends Record<string, unknown>>({
 
   return (
     <div>
-      <div className="flex items-center justify-between p-6 border-b border-[#e6eff5] bg-[#F4F7FC]">
+      <div className="md:flex items-center justify-between p-6 border-b border-[#e6eff5] bg-[#F4F7FC]">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -308,7 +312,7 @@ function SortableTable<T extends Record<string, unknown>>({
             />
           </div>
         </div>
-        <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+        <Button className="bg-blue-500 hover:bg-blue-600 text-white w-full md:w-auto mt-4 md:mt-0">
           <Plus className="w-4 h-4 mr-1" />
           Add customer
         </Button>
@@ -351,13 +355,13 @@ function SortableTable<T extends Record<string, unknown>>({
 
       {/* Pagination */}
       {showPagination && sortedData.length > rowsPerPage && (
-        <div className="flex items-center justify-between p-6 border-t border-[#e6eff5]">
-          <div className="text-[#718ebf] text-sm">
+        <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-t border-[#e6eff5] gap-4">
+          <div className="text-[#718ebf] text-xs sm:text-sm order-2 sm:order-1">
             {startIndex + 1}-{Math.min(endIndex, sortedData.length)} of{" "}
             {sortedData.length}
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#718ebf] text-sm mr-4">
+          <div className="flex items-center gap-2 order-1 sm:order-2">
+            <span className="text-[#718ebf] text-xs sm:text-sm mr-2 sm:mr-4 hidden sm:inline">
               Rows per page: {rowsPerPage}
             </span>
             <Button
@@ -369,7 +373,7 @@ function SortableTable<T extends Record<string, unknown>>({
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            <span className="text-[#343C6A] text-sm px-2">
+            <span className="text-[#343C6A] text-xs sm:text-sm px-2">
               {currentPage}/{totalPages}
             </span>
             <Button

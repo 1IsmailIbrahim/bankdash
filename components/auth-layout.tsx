@@ -38,27 +38,20 @@ export function AuthLayout({ children }: AuthLayoutProps) {
     return <Loading />;
   }
 
-  // If not authenticated, middleware will redirect to login
-  // This is just a fallback
   if (!user) {
     return <Loading />;
   }
 
   return (
     <div className="min-h-screen bg-[#f5f6fb] flex">
-      {/* Sidebar */}
       <Sidebar
         onLogout={logout}
         isOpen={isSidebarOpen}
         onClose={closeSidebar}
       />
 
-      {/* Main Content */}
       <div className="flex-1">
-        {/* Header */}
         <Header onMenuToggle={toggleSidebar} />
-
-        {/* Page Content */}
         {children}
       </div>
     </div>

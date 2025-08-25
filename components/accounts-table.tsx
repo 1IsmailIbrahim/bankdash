@@ -123,14 +123,14 @@ export function AccountsTable() {
           className="shadow-md bg-white dark:bg-white"
         />
       ),
-      className: "w-12",
+      className: "w-12 min-w-[48px]",
     },
     {
       key: "id",
       header: "#",
       sortable: true,
       render: (account: AccountData) => account.id,
-      className: "text-[#343C6A] font-medium",
+      className: "text-[#343C6A] font-medium w-16 min-w-[64px]",
     },
     {
       key: "name",
@@ -142,14 +142,15 @@ export function AccountsTable() {
           <p className="text-[#718ebf] text-sm">{account.accountNumber}</p>
         </div>
       ),
+      className: "min-w-[180px]",
     },
     {
       key: "description",
       header: "DESCRIPTION",
       render: (account: AccountData) => (
-        <p className="truncate">{account.description}</p>
+        <p className="min-w-[250px] max-w-[300px]">{account.description}</p>
       ),
-      className: "text-gray-700 text-sm max-w-xs",
+      className: "text-gray-700 text-sm min-w-[250px]",
     },
     {
       key: "status",
@@ -161,6 +162,7 @@ export function AccountsTable() {
           {account.status}
         </Badge>
       ),
+      className: "min-w-[100px]",
     },
     {
       key: "rate",
@@ -171,7 +173,7 @@ export function AccountsTable() {
           <p className="text-[#718ebf] text-sm text-right">CAD</p>
         </div>
       ),
-      className: "text-right",
+      className: "text-right min-w-[100px]",
     },
     {
       key: "balance",
@@ -190,7 +192,7 @@ export function AccountsTable() {
           <p className="text-[#718ebf] text-sm text-right">CAD</p>
         </div>
       ),
-      className: "text-right",
+      className: "text-right min-w-[120px]",
     },
     {
       key: "deposit",
@@ -201,13 +203,13 @@ export function AccountsTable() {
           <p className="text-[#718ebf] text-sm text-right">CAD</p>
         </div>
       ),
-      className: "text-right",
+      className: "text-right min-w-[120px]",
     },
   ];
 
   return (
-    <div className="p-8">
-      <Card className="bg-white border border-[#dbe2e7] py-0">
+    <div className="pt-2 md:p-8">
+      <Card className="bg-white border border-[#dbe2e7] py-0 overflow-hidden">
         <CardContent className="p-0">
           {/* Loading State */}
           {loading && (
@@ -225,15 +227,13 @@ export function AccountsTable() {
 
           {/* Table */}
           {!loading && !error && (
-            <div className="overflow-x-auto">
-              <SortableTable<AccountData>
-                data={accountsData}
-                columns={columns}
-                onDataChange={setSortedData}
-                rowsPerPage={10}
-                showPagination={true}
-              />
-            </div>
+            <SortableTable<AccountData>
+              data={accountsData}
+              columns={columns}
+              onDataChange={setSortedData}
+              rowsPerPage={10}
+              showPagination={true}
+            />
           )}
         </CardContent>
       </Card>

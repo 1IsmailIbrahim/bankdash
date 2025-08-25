@@ -3,13 +3,13 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-// Fake user data for demonstration
+// user data for demonstration
 const DEMO_USER = {
   id: "1",
   email: "test@test.com",
   password: "123456788", 
   name: "Ismail Ibrahim",
-  avatar: "/images/transfer/ceo.png",
+  avatar: "",
 };
 
 export interface User {
@@ -39,7 +39,7 @@ export async function login(
   email: string,
   password: string
 ): Promise<AuthResult> {
-  // Simulate async authentication
+  //  async authentication 
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   if (email === DEMO_USER.email && password === DEMO_USER.password) {
