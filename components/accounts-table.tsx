@@ -7,14 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { SortableTable } from "@/components/ui/table";
 import { FilterIcon } from "./icons";
 
 const accountsData = [
@@ -136,6 +129,7 @@ const getStatusBadgeVariant = (status: string) => {
 
 export function AccountsTable() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [sortedData, setSortedData] = useState(accountsData);
   const headerCheckboxId = "header-checkbox";
 
   useEffect(() => {
@@ -145,11 +139,11 @@ export function AccountsTable() {
       (wrapper?.querySelector("input") as HTMLInputElement | null) || null;
     if (!input) return;
     input.indeterminate =
-      selectedIds.length > 0 && selectedIds.length < accountsData.length;
-  }, [selectedIds]);
+      selectedIds.length > 0 && selectedIds.length < sortedData.length;
+  }, [selectedIds, sortedData.length]);
 
   const handleSelectAll = (checked: boolean) => {
-    if (checked) setSelectedIds(accountsData.map((a) => a.id));
+    if (checked) setSelectedIds(sortedData.map((a) => a.id));
     else setSelectedIds([]);
   };
 
@@ -158,6 +152,108 @@ export function AccountsTable() {
       setSelectedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
     else setSelectedIds((prev) => prev.filter((x) => x !== id));
   };
+
+  const columns = [
+    {
+      key: "checkbox",
+      header: (
+        <Checkbox
+          id={headerCheckboxId}
+          checked={selectedIds.length === sortedData.length}
+          onCheckedChange={(checked: boolean) => handleSelectAll(!!checked)}
+          className="shadow-md bg-white dark:bg-white"
+        />
+      ),
+      render: (account: (typeof accountsData)[0]) => (
+        <Checkbox
+          checked={selectedIds.includes(account.id)}
+          onCheckedChange={(checked: boolean) =>
+            toggleRow(account.id, !!checked)
+          }
+          className="shadow-md bg-white dark:bg-white"
+        />
+      ),
+      className: "w-12",
+    },
+    {
+      key: "id",
+      header: "#",
+      sortable: true,
+      render: (account: (typeof accountsData)[0]) => account.id,
+      className: "text-[#343C6A] font-medium",
+    },
+    {
+      key: "name",
+      header: "ACCOUNT NAME",
+      sortable: true,
+      render: (account: (typeof accountsData)[0]) => (
+        <div>
+          <p className="text-[#343C6A] font-medium">{account.name}</p>
+          <p className="text-[#718ebf] text-sm">{account.accountNumber}</p>
+        </div>
+      ),
+    },
+    {
+      key: "description",
+      header: "DESCRIPTION",
+      render: (account: (typeof accountsData)[0]) => (
+        <p className="truncate">{account.description}</p>
+      ),
+      className: "text-gray-700 text-sm max-w-xs",
+    },
+    {
+      key: "status",
+      header: "STATUS",
+      render: (account: (typeof accountsData)[0]) => (
+        <Badge
+          className={`${getStatusBadgeVariant(account.status)} border-none`}
+        >
+          {account.status}
+        </Badge>
+      ),
+    },
+    {
+      key: "rate",
+      header: "RATE",
+      render: () => (
+        <div className="text-center">
+          <p className="text-[#343C6A] font-medium text-right">$70.00</p>
+          <p className="text-[#718ebf] text-sm text-right">CAD</p>
+        </div>
+      ),
+      className: "text-right",
+    },
+    {
+      key: "balance",
+      header: "BALANCE",
+      render: (account: (typeof accountsData)[0]) => (
+        <div className="text-right">
+          <p
+            className={`font-medium ${
+              account.balance.startsWith("-")
+                ? "text-[#ff4b4a]"
+                : "text-[#16dbcc]"
+            }`}
+          >
+            {account.balance.replace(" CAD", "")}
+          </p>
+          <p className="text-[#718ebf] text-sm text-right">CAD</p>
+        </div>
+      ),
+      className: "text-right",
+    },
+    {
+      key: "deposit",
+      header: "DEPOSIT",
+      render: () => (
+        <div className="text-center">
+          <p className="text-[#343C6A] font-medium text-right">$500.00</p>
+          <p className="text-[#718ebf] text-sm text-right">CAD</p>
+        </div>
+      ),
+      className: "text-right",
+    },
+  ];
 
   return (
     <div className="p-8">
@@ -189,100 +285,11 @@ export function AccountsTable() {
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">
-                    <Checkbox
-                      id={headerCheckboxId}
-                      // header checkbox: controlled
-                      checked={selectedIds.length === accountsData.length}
-                      onCheckedChange={(checked: boolean) =>
-                        handleSelectAll(!!checked)
-                      }
-                      className="shadow-md bg-white dark:bg-white"
-                    />
-                  </TableHead>
-                  <TableHead>#</TableHead>
-                  <TableHead>ACCOUNT NAME</TableHead>
-                  <TableHead>DESCRIPTION</TableHead>
-                  <TableHead>STATUS</TableHead>
-                  <TableHead className="text-right">RATE</TableHead>
-                  <TableHead className="text-right">BALANCE</TableHead>
-                  <TableHead className="text-right">DEPOSIT</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {accountsData.map((account, idx) => (
-                  <TableRow key={account.id} isEven={idx % 2 === 0}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedIds.includes(account.id)}
-                        onCheckedChange={(checked: boolean) =>
-                          toggleRow(account.id, !!checked)
-                        }
-                        className="shadow-md bg-white dark:bg-white"
-                      />
-                    </TableCell>
-                    <TableCell className="text-[#343C6A] font-medium">
-                      {account.id}
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="text-[#343C6A] font-medium">
-                          {account.name}
-                        </p>
-                        <p className="text-[#718ebf] text-sm">
-                          {account.accountNumber}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-gray-700 text-sm max-w-xs">
-                      <p className="truncate">{account.description}</p>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={`${getStatusBadgeVariant(
-                          account.status
-                        )} border-none`}
-                      >
-                        {account.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-center">
-                        <p className="text-[#343C6A] font-medium text-right">
-                          $70.00
-                        </p>
-                        <p className="text-[#718ebf] text-sm text-right">CAD</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-right">
-                        <p
-                          className={`font-medium ${
-                            account.balance.startsWith("-")
-                              ? "text-[#ff4b4a]"
-                              : "text-[#16dbcc]"
-                          }`}
-                        >
-                          {account.balance.replace(" CAD", "")}
-                        </p>
-                        <p className="text-[#718ebf] text-sm text-right">CAD</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-center">
-                        <p className="text-[#343C6A] font-medium text-right">
-                          $500.00
-                        </p>
-                        <p className="text-[#718ebf] text-sm text-right">CAD</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <SortableTable
+              data={accountsData}
+              columns={columns}
+              onDataChange={setSortedData}
+            />
           </div>
 
           {/* Pagination */}

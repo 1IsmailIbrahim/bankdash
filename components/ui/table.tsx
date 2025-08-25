@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const Table = React.forwardRef<
   HTMLTableElement,
@@ -83,6 +84,61 @@ const TableHead = React.forwardRef<
 ));
 TableHead.displayName = "TableHead";
 
+export type SortDirection = "asc" | "desc" | null;
+
+interface SortableTableHeadProps
+  extends React.ThHTMLAttributes<HTMLTableCellElement> {
+  sortable?: boolean;
+  sortDirection?: SortDirection;
+  onSort?: () => void;
+}
+
+const SortableTableHead = React.forwardRef<
+  HTMLTableCellElement,
+  SortableTableHeadProps
+>(
+  (
+    { className, children, sortable = false, sortDirection, onSort, ...props },
+    ref
+  ) => {
+    if (!sortable) {
+      return (
+        <TableHead ref={ref} className={className} {...props}>
+          {children}
+        </TableHead>
+      );
+    }
+
+    return (
+      <th
+        ref={ref}
+        className={cn(
+          "text-left p-4 text-gray-700 text-sm font-medium border-b border-[#e6eff5] cursor-pointer hover:bg-[#f0f4f8] select-none transition-colors",
+          className
+        )}
+        onClick={onSort}
+        {...props}
+      >
+        <div className="flex items-center gap-2">
+          {children}
+          <div className="flex flex-col">
+            {sortDirection === null && (
+              <ChevronsUpDown className="w-3 h-3 text-gray-400" />
+            )}
+            {sortDirection === "asc" && (
+              <ChevronUp className="w-3 h-3 text-blue-600" />
+            )}
+            {sortDirection === "desc" && (
+              <ChevronDown className="w-3 h-3 text-blue-600" />
+            )}
+          </div>
+        </div>
+      </th>
+    );
+  }
+);
+SortableTableHead.displayName = "SortableTableHead";
+
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
   React.TdHTMLAttributes<HTMLTableCellElement>
@@ -103,12 +159,139 @@ const TableCaption = React.forwardRef<
 ));
 TableCaption.displayName = "TableCaption";
 
+// Enhanced SortableTable component with built-in sorting logic
+interface SortConfig {
+  field: string;
+  direction: SortDirection;
+}
+
+interface ColumnDef<T = Record<string, unknown>> {
+  key: string;
+  header: React.ReactNode;
+  sortable?: boolean;
+  render?: (item: T, index: number) => React.ReactNode;
+  className?: string;
+}
+
+interface SortableTableProps<T = Record<string, unknown>> {
+  data: T[];
+  columns: ColumnDef<T>[];
+  className?: string;
+  onDataChange?: (sortedData: T[]) => void;
+}
+
+function SortableTable<T extends Record<string, unknown>>({
+  data,
+  columns,
+  className,
+  onDataChange,
+}: SortableTableProps<T>) {
+  const [sortConfig, setSortConfig] = React.useState<SortConfig>({
+    field: "",
+    direction: null,
+  });
+
+  const sortedData = React.useMemo(() => {
+    if (!sortConfig.field || !sortConfig.direction) {
+      return data;
+    }
+
+    const sorted = [...data].sort((a, b) => {
+      const aValue = a[sortConfig.field];
+      const bValue = b[sortConfig.field];
+
+      let aVal: string | number;
+      let bVal: string | number;
+
+      // Handle different data types
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        aVal = aValue.toLowerCase();
+        bVal = bValue.toLowerCase();
+      } else if (typeof aValue === "number" && typeof bValue === "number") {
+        aVal = aValue;
+        bVal = bValue;
+      } else {
+        // Convert to string for comparison
+        aVal = String(aValue).toLowerCase();
+        bVal = String(bValue).toLowerCase();
+      }
+
+      if (aVal < bVal) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aVal > bVal) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+
+    return sorted;
+  }, [data, sortConfig]);
+
+  React.useEffect(() => {
+    if (onDataChange) {
+      onDataChange(sortedData);
+    }
+  }, [sortedData, onDataChange]);
+
+  const handleSort = (field: string) => {
+    setSortConfig((prev) => {
+      if (prev.field === field) {
+        // Cycle through: asc -> desc -> null
+        if (prev.direction === "asc") {
+          return { field, direction: "desc" };
+        } else if (prev.direction === "desc") {
+          return { field: "", direction: null };
+        }
+      }
+      return { field, direction: "asc" };
+    });
+  };
+
+  return (
+    <Table className={className}>
+      <TableHeader>
+        <TableRow>
+          {columns.map((column) => (
+            <SortableTableHead
+              key={column.key}
+              sortable={column.sortable}
+              sortDirection={
+                sortConfig.field === column.key ? sortConfig.direction : null
+              }
+              onSort={() => column.sortable && handleSort(column.key)}
+              className={column.className}
+            >
+              {column.header}
+            </SortableTableHead>
+          ))}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {sortedData.map((item, index) => (
+          <TableRow key={String(item.id) || index} isEven={index % 2 === 0}>
+            {columns.map((column) => (
+              <TableCell key={column.key} className={column.className}>
+                {column.render
+                  ? column.render(item, index)
+                  : String(item[column.key] || "")}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
 export {
   Table,
   TableHeader,
   TableBody,
   TableFooter,
   TableHead,
+  SortableTableHead,
+  SortableTable,
   TableRow,
   TableCell,
   TableCaption,
