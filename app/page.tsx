@@ -1,47 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/auth-context";
 import { LoginPage } from "@/components/login-page";
+import Loading from "@/components/ui/loading";
 
 export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isClient, setIsClient] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isClient) return;
-    
-    const authStatus = localStorage.getItem("bankdash-auth");
-    if (authStatus === "true") {
-      setIsAuthenticated(true);
-      router.push("/dashboard");
-    }
-    setIsLoading(false);
-  }, [router, isClient]);
-
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-    localStorage.setItem("bankdash-auth", "true");
-    router.push("/dashboard");
-  };
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#f5f7fa] flex items-center justify-center">
-        <div className="text-[#343C6A]">Loading...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
-  if (isAuthenticated) {
-    return null; // Will redirect to dashboard
+  // If user is authenticated, middleware will redirect to dashboard
+  // This is just a fallback
+  if (user) {
+    return <Loading />;
   }
 
-  return <LoginPage onLogin={handleLogin} />;
+  return <LoginPage />;
 }

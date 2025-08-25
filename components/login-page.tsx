@@ -6,27 +6,30 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useAuth } from "@/contexts/auth-context";
 import Image from "next/image";
 
-interface LoginPageProps {
-  onLogin: () => void;
-}
-
-export function LoginPage({ onLogin }: LoginPageProps) {
+export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const { login } = useAuth();
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
 
-    if (email === "test@test.com" && password === "123456788") {
-      setError("");
-      onLogin();
-    } else {
-      setError("Invalid email or password");
+    const result = await login(email, password);
+
+    if (!result.success) {
+      setError(result.error || "Login failed");
     }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -171,9 +174,10 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-secondary hover:bg-primary text-white font-medium rounded-full"
+                disabled={isSubmitting}
+                className="w-full h-12 bg-secondary hover:bg-primary text-white font-medium rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Login
+                {isSubmitting ? "Logging in..." : "Login"}
               </Button>
             </form>
           </div>

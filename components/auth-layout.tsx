@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
+import { useAuth } from "@/contexts/auth-context";
 import Loading from "@/components/ui/loading";
 
 interface AuthLayoutProps {
@@ -11,26 +11,8 @@ interface AuthLayoutProps {
 }
 
 export function AuthLayout({ children }: AuthLayoutProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    const authStatus = localStorage.getItem("bankdash-auth");
-    if (authStatus === "true") {
-      setIsAuthenticated(true);
-    } else {
-      router.push("/");
-    }
-    setIsLoading(false);
-  }, [router]);
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("bankdash-auth");
-    router.push("/");
-  };
+  const { user, isLoading, logout } = useAuth();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -56,15 +38,17 @@ export function AuthLayout({ children }: AuthLayoutProps) {
     return <Loading />;
   }
 
-  if (!isAuthenticated) {
-    return null;
+  // If not authenticated, middleware will redirect to login
+  // This is just a fallback
+  if (!user) {
+    return <Loading />;
   }
 
   return (
     <div className="min-h-screen bg-[#f5f6fb] flex">
       {/* Sidebar */}
       <Sidebar
-        onLogout={handleLogout}
+        onLogout={logout}
         isOpen={isSidebarOpen}
         onClose={closeSidebar}
       />
