@@ -1,5 +1,7 @@
 "use client";
 
+import { BankBuildIcon } from "../icons";
+
 export default function Loading() {
   return (
     <div className="min-h-screen bg-[#f5f7fa] flex items-center justify-center p-4">
@@ -9,19 +11,7 @@ export default function Loading() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 mb-4 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-transparent"></div>
             <div className="relative z-10">
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-                fill="none"
-                className="text-white"
-              >
-                {/* Bank/Financial icon */}
-                <path
-                  d="M16 2L2 9v2h28V9L16 2zM6 13v12h4V13H6zm6 0v12h4V13h-4zm6 0v12h4V13h-4zm6 0v12h4V13h-4zM2 27h28v2H2v-2z"
-                  fill="currentColor"
-                />
-              </svg>
+              <BankBuildIcon />
             </div>
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">BankDash</h2>

@@ -32,7 +32,7 @@ export function QuickTransfers() {
         Quick Transfer{" "}
       </h2>
       <Card className="bg-white rounded-2xl p-4 md:p-8 shadow-sm border border-gray-200 w-full">
-        <div className="flex space-y-6 md:space-y-0 flex-row justify-between mb-8 md:mb-16">
+        <div className="flex flex-row items-center space-y-6 md:space-y-0 justify-between mb-8 md:mb-16">
           <div className="flex items-center space-x-3 md:space-x-8 overflow-x-auto pb-2 md:pb-0">
             {contactsData.map((contact) => (
               <div
@@ -64,7 +64,7 @@ export function QuickTransfers() {
           </div>
 
           {/* Navigation arrow */}
-          <button className="self-center md:self-auto p-2 md:p-3 bg-white shadow-md hover:bg-gray-50 rounded-full transition-colors">
+          <button className="self-center md:self-auto inline-flex items-center justify-center bg-white shadow-md hover:bg-gray-50 rounded-full transition-colors h-9 w-9 md:h-12 md:w-12">
             <ChevronRight className="w-4 h-4 md:w-6 md:h-6 text-gray-400" />
           </button>
         </div>

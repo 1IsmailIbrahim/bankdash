@@ -40,20 +40,20 @@ const cardData = [
 
 export const MyCardsSection = () => {
   return (
-    <section className="w-full h-full relative">
+    <section className="w-full h-full relative min-h-[350px]">
       <div className="flex justify-between items-center mb-6 md:mb-[47px]">
         <h2 className="font-semibold text-[#343C6A] text-lg md:text-[22px] tracking-[0] leading-[normal]">
           My Cards
         </h2>
         <Button
           variant="ghost"
-          className="h-auto p-0 font-semibold text-[#343C6A] text-sm md:text-[17px] text-right tracking-[0] leading-[normal] hover:bg-transparent"
+          className="h-auto p-1 font-semibold text-[#343C6A] text-sm md:text-[17px] text-right tracking-[0] leading-[normal] hover:bg-transparent"
         >
           See All
         </Button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 md:gap-[30px] w-full justify-start items-start overflow-x-auto">
+      <div className="flex flex-col sm:flex-row gap-4 md:gap-[30px] w-full justify-start items-start overflow-x-auto h-full">
         {cardData.map((card) => (
           <Card
             key={card.id}

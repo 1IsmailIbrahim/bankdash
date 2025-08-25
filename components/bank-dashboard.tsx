@@ -24,7 +24,7 @@ export function BankDashboard({ onLogout }: BankDashboardProps) {
 
         <div className="p-4 md:p-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-8 min-h-[350px]">
               <MyCardsSection />
             </div>
 
