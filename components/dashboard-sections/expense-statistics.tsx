@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const expenseData = [
-  { label: "Entertainment", percentage: 30, color: "#343c6a" },
+  { label: "Entertainment", percentage: 30, color: "#343C6A" },
   { label: "Bill Expense", percentage: 15, color: "#fc7900" },
   { label: "Investment", percentage: 20, color: "#fa00ff" },
   { label: "Others", percentage: 35, color: "#1814f3" },
@@ -25,11 +25,11 @@ const renderCustomLabel = (props: any) => {
       fill="white"
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
-      fontSize="14"
+      fontSize="12"
       fontWeight="bold"
     >
-      <tspan x={x} dy="-8">{`${(percent * 100).toFixed(0)}%`}</tspan>
-      <tspan x={x} dy="16">
+      <tspan x={x} dy="-6">{`${(percent * 100).toFixed(0)}%`}</tspan>
+      <tspan x={x} dy="12" fontSize="10">
         {payload.label}
       </tspan>
     </text>
@@ -39,19 +39,19 @@ const renderCustomLabel = (props: any) => {
 export function ExpenseStatistics() {
   return (
     <div>
-      <h2 className="text-[#343c6a] text-xl font-semibold mb-6">
+      <h2 className="text-[#343C6A] text-lg md:text-xl font-semibold mb-4 md:mb-6">
         Expense Statistics
       </h2>
       <Card className="bg-white border border-[#e6eff5]">
-        <CardContent>
-          <div className="relative w-80 h-80 mx-auto mb-4">
+        <CardContent className="p-4 md:p-6">
+          <div className="relative w-full h-64 md:h-80 mx-auto mb-4">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={expenseData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={120}
+                  outerRadius="80%"
                   paddingAngle={2}
                   dataKey="percentage"
                   startAngle={90}

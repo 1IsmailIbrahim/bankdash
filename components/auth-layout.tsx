@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sidebar } from "@/components/sidebar";
-import { Header } from "@/components/header";
+import { Sidebar } from "@/components/layout/sidebar";
+import { Header } from "@/components/layout/header";
+import Loading from "@/components/ui/loading";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ interface AuthLayoutProps {
 export function AuthLayout({ children }: AuthLayoutProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -30,12 +32,28 @@ export function AuthLayout({ children }: AuthLayoutProps) {
     router.push("/");
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
+  // toggle sidebar in different screen
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#f5f7fa] flex items-center justify-center">
-        <div className="text-[#343c6a]">Loading...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!isAuthenticated) {
@@ -45,12 +63,16 @@ export function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="min-h-screen bg-[#f5f7fa] flex">
       {/* Sidebar */}
-      <Sidebar onLogout={handleLogout} />
+      <Sidebar
+        onLogout={handleLogout}
+        isOpen={isSidebarOpen}
+        onClose={closeSidebar}
+      />
 
       {/* Main Content */}
       <div className="flex-1">
         {/* Header */}
-        <Header />
+        <Header onMenuToggle={toggleSidebar} />
 
         {/* Page Content */}
         {children}

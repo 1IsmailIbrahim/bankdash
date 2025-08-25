@@ -189,12 +189,12 @@ export function AccountsTable() {
                     <td className="p-4">
                       <Checkbox />
                     </td>
-                    <td className="p-4 text-[#343c6a] font-medium">
+                    <td className="p-4 text-[#343C6A] font-medium">
                       {account.id}
                     </td>
                     <td className="p-4">
                       <div>
-                        <p className="text-[#343c6a] font-medium">
+                        <p className="text-[#343C6A] font-medium">
                           {account.name}
                         </p>
                         <p className="text-[#718ebf] text-sm">
@@ -216,7 +216,7 @@ export function AccountsTable() {
                     </td>
                     <td className="p-4">
                       <div className="text-center">
-                        <p className="text-[#343c6a] font-medium">$70.00</p>
+                        <p className="text-[#343C6A] font-medium">$70.00</p>
                         <p className="text-[#718ebf] text-sm">CAD</p>
                       </div>
                     </td>
@@ -236,7 +236,7 @@ export function AccountsTable() {
                     </td>
                     <td className="p-4">
                       <div className="text-center">
-                        <p className="text-[#343c6a] font-medium">$500.00</p>
+                        <p className="text-[#343C6A] font-medium">$500.00</p>
                         <p className="text-[#718ebf] text-sm">CAD</p>
                       </div>
                     </td>
@@ -256,7 +256,7 @@ export function AccountsTable() {
               <Button variant="ghost" size="icon" className="text-[#718ebf]">
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <span className="text-[#343c6a] text-sm px-2">1/10</span>
+              <span className="text-[#343C6A] text-sm px-2">1/10</span>
               <Button variant="ghost" size="icon" className="text-[#718ebf]">
                 <ChevronRight className="w-4 h-4" />
               </Button>

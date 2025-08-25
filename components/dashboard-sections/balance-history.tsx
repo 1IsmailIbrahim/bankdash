@@ -1,29 +1,36 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { XAxis, YAxis, ResponsiveContainer, Area, AreaChart } from "recharts";
+import {
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Area,
+  AreaChart,
+  CartesianGrid,
+} from "recharts";
 
 const balanceData = [
-  { month: "Jul", balance: 150 },
-  { month: "Aug", balance: 120 },
-  { month: "Sep", balance: 100 },
-  { month: "Oct", balance: 80 },
-  { month: "Nov", balance: 60 },
-  { month: "Dec", balance: 90 },
-  { month: "Jan", balance: 70 },
+  { month: "Jul", balance: 200 },
+  { month: "Aug", balance: 300 },
+  { month: "Sep", balance: 400 },
+  { month: "Oct", balance: 800 },
+  { month: "Nov", balance: 200 },
+  { month: "Dec", balance: 500 },
+  { month: "Jan", balance: 600 },
 ];
 
 export function BalanceHistory() {
   return (
     <div>
-      <h2 className="text-[#343c6a] text-xl font-semibold mb-6">
+      <h2 className="text-[#343C6A] text-lg md:text-xl font-semibold mb-4 md:mb-6">
         Balance History
       </h2>
       <Card className="bg-white border border-[#e6eff5]">
-        <CardContent className="p-6">
-          <div className="h-64 relative">
+        <CardContent className="p-4 md:p-6">
+          <div className="h-48 md:h-64 relative">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={balanceData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
               >
                 <defs>
                   <linearGradient
@@ -37,18 +44,31 @@ export function BalanceHistory() {
                     <stop offset="100%" stopColor="#1814f3" stopOpacity={0} />
                   </linearGradient>
                 </defs>
+                <CartesianGrid
+                  strokeDasharray="5 5"
+                  stroke="#e0e0e0"
+                  horizontal={true}
+                  vertical={true}
+                />
                 <XAxis
                   dataKey="month"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: "#718ebf" }}
+                  tick={{ fontSize: 10, fill: "#718ebf" }}
+                  interval={0}
                 />
-                <YAxis hide />
+                <YAxis
+                  domain={[0, 800]}
+                  ticks={[0, 200, 400, 600, 800]}
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: "#718ebf" }}
+                />
                 <Area
                   type="monotone"
                   dataKey="balance"
                   stroke="#1814f3"
-                  strokeWidth={3}
+                  strokeWidth={2}
                   fill="url(#balanceGradient)"
                   fillOpacity={1}
                 />
