@@ -66,7 +66,7 @@ export function Sidebar({ onLogout, isOpen = false, onClose }: SidebarProps) {
           <div>
             <DoubleCreditIcon />
           </div>
-          <span className="text-[#353c6b] font-bold text-xl">BankDash.</span>
+          <span className="text-[#353c6b] font-bold text-2xl">BankDash.</span>
         </div>
 
         <nav className="space-y-2">
