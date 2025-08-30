@@ -73,16 +73,3 @@ export async function getUser(): Promise<IUser | null> {
     return null;
   }
 }
-
-export async function requireAuth(): Promise<IUser> {
-  const user = await getUser();
-  if (!user) {
-    redirect("/");
-  }
-  return user;
-}
-
-export async function isAuthenticated(): Promise<boolean> {
-  const user = await getUser();
-  return !!user;
-}
