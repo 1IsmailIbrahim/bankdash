@@ -1,5 +1,6 @@
 "use server";
 
+import { IAuthResult, IUser } from "@/interfaces";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -7,23 +8,10 @@ import { redirect } from "next/navigation";
 const DEMO_USER = {
   id: "1",
   email: "test@test.com",
-  password: "123456788", 
+  password: "123456788",
   name: "Ismail Ibrahim",
   avatar: "",
 };
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatar?: string;
-}
-
-export interface AuthResult {
-  success: boolean;
-  error?: string;
-  user?: User;
-}
 
 // Cookie configuration
 const AUTH_COOKIE_NAME = "bankdash-auth";
@@ -38,12 +26,12 @@ const AUTH_COOKIE_OPTIONS = {
 export async function login(
   email: string,
   password: string
-): Promise<AuthResult> {
-  //  async authentication 
+): Promise<IAuthResult> {
+  //  async authentication
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   if (email === DEMO_USER.email && password === DEMO_USER.password) {
-    const user: User = {
+    const user: IUser = {
       id: DEMO_USER.id,
       email: DEMO_USER.email,
       name: DEMO_USER.name,
@@ -69,7 +57,7 @@ export async function logout(): Promise<void> {
   cookieStore.delete(AUTH_COOKIE_NAME);
 }
 
-export async function getUser(): Promise<User | null> {
+export async function getUser(): Promise<IUser | null> {
   try {
     const cookieStore = await cookies();
     const authCookie = cookieStore.get(AUTH_COOKIE_NAME);
@@ -78,7 +66,7 @@ export async function getUser(): Promise<User | null> {
       return null;
     }
 
-    const user = JSON.parse(authCookie.value) as User;
+    const user = JSON.parse(authCookie.value) as IUser;
     return user;
   } catch (error) {
     console.error("Error getting user from cookie:", error);
@@ -86,7 +74,7 @@ export async function getUser(): Promise<User | null> {
   }
 }
 
-export async function requireAuth(): Promise<User> {
+export async function requireAuth(): Promise<IUser> {
   const user = await getUser();
   if (!user) {
     redirect("/");

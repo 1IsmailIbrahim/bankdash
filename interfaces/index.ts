@@ -1,14 +1,14 @@
-export interface User {
+export interface IUser {
   id: string;
   email: string;
   name: string;
   avatar?: string;
 }
 
-export interface AuthResult {
+export interface IAuthResult {
   success: boolean;
   error?: string;
-  user?: User;
+  user?: IUser;
 }
 
 export interface Transaction {
@@ -27,4 +27,15 @@ export interface Card {
   cardHolder: string;
   validThru: string;
   cardNumber: string;
+}
+
+export interface IAccountData extends Record<string, unknown> {
+  id: number;
+  name: string;
+  accountNumber: string;
+  description: string;
+  status: string;
+  rate: string;
+  balance: string;
+  deposit: string;
 }

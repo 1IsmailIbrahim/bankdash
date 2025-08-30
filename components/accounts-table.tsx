@@ -5,17 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SortableTable } from "@/components/ui/table";
-
-interface AccountData extends Record<string, unknown> {
-  id: number;
-  name: string;
-  accountNumber: string;
-  description: string;
-  status: string;
-  rate: string;
-  balance: string;
-  deposit: string;
-}
+import { IAccountData } from "@/interfaces";
 
 const getStatusBadgeVariant = (status: string) => {
   switch (status) {
@@ -33,11 +23,11 @@ const getStatusBadgeVariant = (status: string) => {
 };
 
 export function AccountsTable() {
-  const [accountsData, setAccountsData] = useState<AccountData[]>([]);
+  const [accountsData, setAccountsData] = useState<IAccountData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [sortedData, setSortedData] = useState<AccountData[]>([]);
+  const [sortedData, setSortedData] = useState<IAccountData[]>([]);
   const headerCheckboxId = "header-checkbox";
 
   useEffect(() => {
@@ -47,7 +37,7 @@ export function AccountsTable() {
         const response = await fetch(
           "https://dummyjson.com/c/2a87-7764-4427-99a0",
           {
-            cache: "force-cache",
+            cache: "no-store",
           }
         );
 
@@ -55,7 +45,7 @@ export function AccountsTable() {
           throw new Error("Failed to fetch accounts data");
         }
 
-        const data: AccountData[] = await response.json();
+        const data: IAccountData[] = await response.json();
         setAccountsData(data);
         setSortedData(data);
         setError(null);
@@ -71,7 +61,6 @@ export function AccountsTable() {
   }, []);
 
   useEffect(() => {
-    // set the native input indeterminate state when some but not all are selected
     const wrapper = document.getElementById(headerCheckboxId);
     const input =
       (wrapper?.querySelector("input") as HTMLInputElement | null) || null;
@@ -87,7 +76,7 @@ export function AccountsTable() {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      const allIds = sortedData.map((a: AccountData) => a.id);
+      const allIds = sortedData.map((a: IAccountData) => a.id);
       setSelectedIds(allIds);
     } else {
       setSelectedIds([]);
@@ -114,7 +103,7 @@ export function AccountsTable() {
           className="shadow-md bg-white dark:bg-white"
         />
       ),
-      render: (account: AccountData) => (
+      render: (account: IAccountData) => (
         <Checkbox
           checked={selectedIds.includes(account.id)}
           onCheckedChange={(checked: boolean) =>
@@ -129,14 +118,14 @@ export function AccountsTable() {
       key: "id",
       header: "#",
       sortable: true,
-      render: (account: AccountData) => account.id,
+      render: (account: IAccountData) => account.id,
       className: "text-[#343C6A] font-medium w-16 min-w-[64px]",
     },
     {
       key: "name",
       header: "ACCOUNT NAME",
       sortable: true,
-      render: (account: AccountData) => (
+      render: (account: IAccountData) => (
         <div>
           <p className="text-[#343C6A] font-medium">{account.name}</p>
           <p className="text-[#718ebf] text-sm">{account.accountNumber}</p>
@@ -147,7 +136,7 @@ export function AccountsTable() {
     {
       key: "description",
       header: "DESCRIPTION",
-      render: (account: AccountData) => (
+      render: (account: IAccountData) => (
         <p className="min-w-[250px] max-w-[300px]">{account.description}</p>
       ),
       className: "text-gray-700 text-sm min-w-[250px]",
@@ -155,7 +144,7 @@ export function AccountsTable() {
     {
       key: "status",
       header: "STATUS",
-      render: (account: AccountData) => (
+      render: (account: IAccountData) => (
         <Badge
           className={`${getStatusBadgeVariant(account.status)} border-none`}
         >
@@ -178,7 +167,7 @@ export function AccountsTable() {
     {
       key: "balance",
       header: "BALANCE",
-      render: (account: AccountData) => (
+      render: (account: IAccountData) => (
         <div className="text-right">
           <p
             className={`font-medium ${
@@ -227,7 +216,7 @@ export function AccountsTable() {
 
           {/* Table */}
           {!loading && !error && (
-            <SortableTable<AccountData>
+            <SortableTable<IAccountData>
               data={accountsData}
               columns={columns}
               onDataChange={setSortedData}
